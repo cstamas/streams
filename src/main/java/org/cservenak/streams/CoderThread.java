@@ -18,6 +18,8 @@
  */
 package org.cservenak.streams;
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,15 +50,15 @@ public class CoderThread
                 {
                     coder.code( in, outSink );
 
-                    outSink.flush();
-                    
-                    outSink.close();
+                    flush( outSink );
                 }
                 catch ( IOException e )
                 {
-                    e.printStackTrace();
-
                     throwable = e;
+                }
+                finally
+                {
+                    close( outSink );
                 }
             }
         };
@@ -75,15 +77,15 @@ public class CoderThread
                 {
                     coder.code( inSink, out );
 
-                    out.flush();
-                    
-                    inSink.close();
+                    flush( out );
                 }
                 catch ( IOException e )
                 {
-                    e.printStackTrace();
-
                     throwable = e;
+                }
+                finally
+                {
+                    close( inSink );
                 }
             }
         };
@@ -109,5 +111,45 @@ public class CoderThread
     public PipedOutputStream getOutputStreamSink()
     {
         return outSink;
+    }
+
+    // ==
+
+    protected boolean flush( Flushable flushable )
+    {
+        if ( flushable != null )
+        {
+            try
+            {
+                flushable.flush();
+
+                return true;
+            }
+            catch ( IOException e )
+            {
+                // mute
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean close( Closeable closeable )
+    {
+        if ( closeable != null )
+        {
+            try
+            {
+                closeable.close();
+
+                return true;
+            }
+            catch ( IOException e )
+            {
+                // mute
+            }
+        }
+
+        return false;
     }
 }
