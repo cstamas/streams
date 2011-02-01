@@ -52,7 +52,7 @@ public class CoderThread
 
                     flush( outSink );
                 }
-                catch ( IOException e )
+                catch ( Throwable e )
                 {
                     throwable = e;
                 }
@@ -79,7 +79,7 @@ public class CoderThread
 
                     flush( out );
                 }
-                catch ( IOException e )
+                catch ( Throwable e )
                 {
                     throwable = e;
                 }
@@ -101,6 +101,22 @@ public class CoderThread
     public Throwable getThrowable()
     {
         return throwable;
+    }
+
+    public void checkForException()
+        throws IOException
+    {
+        if ( null != throwable )
+        {
+            if ( throwable instanceof IOException )
+            {
+                throw (IOException) throwable;
+            }
+            else
+            {
+                throw new IOException( throwable );
+            }
+        }
     }
 
     public PipedInputStream getInputStreamSink()

@@ -37,7 +37,7 @@ public class CoderOutputStream
 
         this.ct.start();
     }
-    
+
     public void write( int b )
         throws IOException
     {
@@ -89,5 +89,7 @@ public class CoderOutputStream
         {
             throw new IOException( e );
         }
+
+        ct.checkForException();
     }
 }

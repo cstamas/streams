@@ -87,6 +87,8 @@ public class CoderInputStream
         {
             throw new IOException( e );
         }
+
+        ct.checkForException();
     }
 
     @Override
